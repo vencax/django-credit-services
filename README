@@ -1,0 +1,13 @@
+Allows users to prepay some services.
+
+Usage
+---------
+
+1. Add 'creditservices' application in the ``INSTALLED_APPS`` settings:
+   
+	INSTALLED_APPS = (
+	    # ...
+	    'creditservices',
+	)
+
+3. Run python manage.py migrate creditservices to create DB tables (uses django-south).
