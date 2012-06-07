@@ -1,0 +1,9 @@
+{% load i18n %}
+
+{% blocktrans with user.id as VS %}
+Hi,
+please send an amount with variable symbol {{ VS }} to account {{ account }} increase your credit.
+Your current credit is {{ state }}.
+
+yours sincerely {{ domain }} team.
+{% endblocktrans %}
