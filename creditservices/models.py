@@ -14,8 +14,6 @@ class CreditInfo(models.Model):
     currency = models.ForeignKey(Thing)
     company = models.ForeignKey(CompanyInfo, related_name='credits')
 
-Invoice.add_to_class('prepaid', models.BooleanField(_('prepaid'), default=False))
-
 post_save.connect(invoice_saved, sender=Invoice,
                   dispatch_uid='invoice_save_credit')
 post_delete.connect(invoice_deleted, sender=Invoice,

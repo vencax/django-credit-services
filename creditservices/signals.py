@@ -10,7 +10,7 @@ def invoice_saved(instance, sender, **kwargs):
     It adds invoice value to user's credit and generate
     margin call if necessary.
     """
-    if not instance.prepaid:
+    if not instance.paymentWay != instance.PREPAID:
         return
     if len(instance.items.all()) > 0 and not instance.paid:
         companyInfo = instance.subscriber
