@@ -1,0 +1,65 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR vencax77@gmail.com, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-06-08 12:27+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
+
+#: models.py:13
+msgid "value"
+msgstr "hodnota"
+
+#: signals.py:43
+msgid "credit call"
+msgstr "Žádost o navýšení kredit"
+
+#: management/commands/newCreditNotification.py:59
+msgid "credit increased"
+msgstr "kredit navýšen"
+
+#: templates/creditservices/marginCall.html:3
+#, python-format
+msgid ""
+"\n"
+"Hi,\n"
+"please send an amount with variable symbol %(VS)s to account %(account)s "
+"increase your credit.\n"
+"Your current credit is %(state)s.\n"
+"\n"
+"yours sincerely %(domain)s robot.\n"
+msgstr "\n"
+"Zdravíčko,\n"
+"prosím navyšte si kredit platbou s variabilním symbolem %(VS)s na účet %(account)s "
+".\n"
+"Váš současný kredit je %(state)s.\n"
+"\n"
+"s pozdravem %(domain)s robot.\n"
+
+#: templates/creditservices/thxForCredit.html:3
+#, python-format
+msgid ""
+"\n"
+"Hi,\n"
+"we have received amount of %(amount)s, currency: %(currency)s from you.\n"
+"Your current credit is %(state)s %(currency)s.\n"
+"\n"
+"yours sincerely %(domain)s robot.\n"
+msgstr ""
+"\n"
+"Zdravíčko,\n"
+"eviduji od vás příchozí platbu ve výši %(amount)s, měna: %(currency)s.\n"
+"Váš současný kredit je %(state)s %(currency)s.\n"
+"\n"
+"s pozdravem %(domain)s robot.\n"
