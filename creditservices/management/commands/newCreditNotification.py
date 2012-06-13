@@ -6,17 +6,19 @@ Created on Dec 29, 2011
 import logging
 from django.conf import settings
 from django.contrib.auth.models import User
-from valueladder.models import Thing
 from django.template.loader import render_to_string
+from django.utils.translation import activate
 from django.utils.translation import ugettext
 from django.contrib.sites.models import Site
 from mailserver.command import EmailHandlingCommand
+from valueladder.models import Thing
 from invoices.models import CompanyInfo
 
 class Command(EmailHandlingCommand):
     help = 'parses incoming mail and takes actions base on it'
     
     def processMail(self, recipient, mailfrom, data):
+        activate(settings.LANGUAGE_CODE)
         
         logging.info('Loading %s' % settings.CREDIT_NOTIFICATION_PARSER)
         
