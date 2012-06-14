@@ -29,17 +29,17 @@ class Command(EmailHandlingCommand):
         
         logging.info('Parsed: %s' % str(parsed))
         
-        vs, _, amount, _, currencyCode = parsed
+        vs, ss, amount, _, currencyCode = parsed
         
         currency = Thing.objects.get(code=currencyCode)
         try:
-            self._processParsed(vs, amount, currency)
+            self._processParsed(vs, ss, amount, currency)
         except User.DoesNotExist:
             self._onBadVS(data)
         except CompanyInfo.DoesNotExist:
             self._onBadVS(data)
             
-    def _processParsed(self, vs, amount, currency):
+    def _processParsed(self, vs, ss, amount, currency):
         u = User.objects.get(pk=int(vs))
         companyInfo = CompanyInfo.objects.get(user__id=u.id)
         try:
@@ -51,6 +51,13 @@ class Command(EmailHandlingCommand):
         creditInfo.value += amount
         creditInfo.save()
         
+        # run appropriate credit handlers
+        try:
+            handler = self._getHandler(settings.CREDIT_HANDLERS[ss])            
+        except KeyError:
+            handler = self._getHandler(settings.CREDIT_HANDLERS[None])
+        handler(companyInfo, vs, amount, currency)
+        
         if u.email:
             mailContent = render_to_string('creditservices/thxForCredit.html', {
                 'amount' : amount,
@@ -58,7 +65,16 @@ class Command(EmailHandlingCommand):
                 'state' : creditInfo.value,
                 'domain' : Site.objects.get_current()
             })
-            u.email_user(ugettext('credit increased'), mailContent)       
+            u.email_user(ugettext('credit increased'), mailContent)
         
     def _onBadVS(self, data):
         pass
+
+    def _getHandler(self, handler):
+        parts = handler.split('.')
+        func = parts[len(parts)-1]
+        module = __import__('.'.join(parts[:len(parts)-1]), 
+                            globals={}, locals={}, 
+                            fromlist=[func])
+        return getattr(module, func)
+        
