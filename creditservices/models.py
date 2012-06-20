@@ -11,3 +11,7 @@ class CreditInfo(models.Model):
     value = models.FloatField(_('value'))
     currency = models.ForeignKey(Thing)
     company = models.ForeignKey(CompanyInfo, related_name='credits')
+    
+CompanyInfo.add_to_class('debtbegin', models.DateField(_('debt begin'), 
+        blank=True, null=True, default=None,
+        help_text=_('Date of cross zero in any of credits of the user')))

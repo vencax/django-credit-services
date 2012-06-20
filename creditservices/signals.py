@@ -7,6 +7,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext
+import datetime
 
 #def invoice_saved(instance, sender, **kwargs):
 #    """
@@ -31,6 +32,9 @@ from django.utils.translation import ugettext
 #    #TODO: reverse credit from this invoice
 #    pass
 
+serviceShutdownHandlers = []
+""" Handlers that are called if a company stays in debt too long """
+
 def processCredit(companyInfo, value, currency, bankaccount):
     """ Adds value of appropriate creditInfo. 
         Sends margin call if necessary. """
@@ -52,3 +56,13 @@ def processCredit(companyInfo, value, currency, bankaccount):
             'account' : bankaccount
         })
         companyInfo.user.email_user(ugettext('credit call'), mailContent)
+        
+    # start count days in debt
+    if creditInfo.value and companyInfo.debtbegin is None:
+        companyInfo.debtbegin = datetime.datetime.now()
+
+    # check if the company is not in debt too long
+    daysInDept = (datetime.datetime.now() - companyInfo.debtbegin).days
+    if daysInDept > settings.DEPTH_DEATHLINE:
+        for callback in serviceShutdownHandlers:
+            callback(companyInfo, creditInfo)

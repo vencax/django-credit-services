@@ -51,6 +51,8 @@ class Command(EmailHandlingCommand):
         creditInfo.value += amount
         creditInfo.save()
         
+        self._resetDebtFlag(companyInfo, creditInfo)
+        
         # run appropriate credit handlers
         try:
             handler = self._getHandler(settings.CREDIT_HANDLERS[ss])            
@@ -78,3 +80,11 @@ class Command(EmailHandlingCommand):
                             fromlist=[func])
         return getattr(module, func)
         
+    def _resetDebtFlag(self, companyInfo, creditInfo):
+        """ If company has now all it credits positive, reset debtbegin flag
+        """
+        if companyInfo.debtbegin is not None:
+            for ci in companyInfo.credits.all():
+                if ci.value < 0:
+                    return
+            companyInfo.debtbegin = None
