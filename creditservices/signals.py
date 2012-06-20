@@ -33,6 +33,7 @@ from django.dispatch.dispatcher import Signal
 #    pass
 
 shutdown_credit_services = Signal(providing_args=['instance', 'creditInfo'])
+new_credit_arrived = Signal(providing_args=['creditInfo', 'vs', 'ss', 'amount'])
 
 def processCredit(companyInfo, value, currency, bankaccount):
     """ Adds value of appropriate creditInfo.

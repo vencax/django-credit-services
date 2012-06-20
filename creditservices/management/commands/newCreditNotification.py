@@ -13,9 +13,10 @@ from django.contrib.sites.models import Site
 from mailserver.command import EmailHandlingCommand
 from valueladder.models import Thing
 from invoices.models import CompanyInfo
+from creditservices.signals import new_credit_arrived
 
 class Command(EmailHandlingCommand):
-    help = 'parses incoming mail and takes actions base on it'
+    help = 'parses incoming mail and takes actions base on it' #@ReservedAssignment
     
     def processMail(self, recipient, mailfrom, data):
         activate(settings.LANGUAGE_CODE)
@@ -53,12 +54,8 @@ class Command(EmailHandlingCommand):
         
         self._resetDebtFlag(companyInfo, creditInfo)
         
-        # run appropriate credit handlers
-        try:
-            handler = self._getHandler(settings.CREDIT_HANDLERS[ss])            
-        except KeyError:
-            handler = self._getHandler(settings.CREDIT_HANDLERS[None])
-        handler(companyInfo, vs, amount, currency)
+        new_credit_arrived.send(sender=CompanyInfo, vs=vs, ss=ss, 
+                                amount=amount, creditInfo=creditInfo)
         
         if u.email:
             mailContent = render_to_string('creditservices/thxForCredit.html', {
@@ -71,14 +68,6 @@ class Command(EmailHandlingCommand):
         
     def _onBadVS(self, data):
         pass
-
-    def _getHandler(self, handler):
-        parts = handler.split('.')
-        func = parts[len(parts)-1]
-        module = __import__('.'.join(parts[:len(parts)-1]), 
-                            globals={}, locals={}, 
-                            fromlist=[func])
-        return getattr(module, func)
         
     def _resetDebtFlag(self, companyInfo, creditInfo):
         """ If company has now all it credits positive, reset debtbegin flag
