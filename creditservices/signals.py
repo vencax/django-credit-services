@@ -56,3 +56,5 @@ def processCredit(companyInfo, value, currency, bankaccount):
             'account' : bankaccount
         })
         companyInfo.user.email_user(ugettext('credit call'), mailContent)
+
+    return creditInfo.value
