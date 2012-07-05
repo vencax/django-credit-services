@@ -10,12 +10,14 @@ from invoices.models import CompanyInfo
 from django.core.management.base import BaseCommand
 from creditservices.signals import shutdown_credit_services
 from django.db.transaction import commit_on_success
+from django.utils.translation import activate
 
 class Command(BaseCommand):
     help = 'check credits of companies if they are not in debt too long' #@ReservedAssignment
     DEPTH_DEATHLINE = getattr(settings, 'DEPTH_DEATHLINE', 30)
     
     def handle(self, *args, **options):
+        activate(settings.LANGUAGE_CODE)
         logging.basicConfig()
         
         for companyInfo in CompanyInfo.objects.all():

@@ -9,6 +9,8 @@ from django.core.management.base import BaseCommand
 from valueladder.models import Thing
 from creditservices.signals import processCredit
 from optparse import make_option
+from django.utils.translation import activate
+from django.conf import settings
 
 class Command(BaseCommand):
     help = 'check credits of companies if they are not in debt too long' #@ReservedAssignment
@@ -20,6 +22,7 @@ class Command(BaseCommand):
     )
     
     def handle(self, *args, **options):
+        activate(settings.LANGUAGE_CODE)
         logging.basicConfig()
         companyInfo = CompanyInfo.objects.get(user__id=options['user'])
         if options['currency']:
