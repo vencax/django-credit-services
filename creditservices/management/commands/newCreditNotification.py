@@ -14,6 +14,7 @@ from mailserver.command import EmailHandlingCommand
 from valueladder.models import Thing
 from invoices.models import CompanyInfo
 from creditservices.signals import new_credit_arrived
+from django.core.mail import mail_admins
 
 class Command(EmailHandlingCommand):
     help = 'parses incoming mail and takes actions base on it' #@ReservedAssignment
@@ -25,19 +26,21 @@ class Command(EmailHandlingCommand):
         
         pMod = __import__(settings.CREDIT_NOTIFICATION_PARSER, 
                           globals={}, locals={}, fromlist=['Parser'])
-        parser = pMod.Parser()
-        parsed = parser.parse(data)
-        
-        logging.info('Parsed: %s' % str(parsed))
-        
-        vs, ss, amount, _, currencyCode = parsed
-        
-        currency = Thing.objects.get(code=currencyCode)
         try:
+            parser = pMod.Parser()
+            parsed = parser.parse(data)
+            
+            logging.info('Parsed: %s' % str(parsed))
+            
+            transactionType, vs, ss, amount, _, _, currencyCode = parsed
+            
+            if transactionType != 'IN':
+                return
+        
+            currency = Thing.objects.get(code=currencyCode)
+
             self._processParsed(vs, ss, amount, currency)
-        except User.DoesNotExist:
-            self._onBadVS(data)
-        except CompanyInfo.DoesNotExist:
+        except Exception:
             self._onBadVS(data)
             
     def _processParsed(self, vs, ss, amount, currency):
@@ -67,7 +70,7 @@ class Command(EmailHandlingCommand):
             u.email_user(ugettext('credit increased'), mailContent)
         
     def _onBadVS(self, data):
-        pass
+        mail_admins('Unassotiated payment', data, fail_silently=True)
         
     def _resetDebtFlag(self, companyInfo, creditInfo):
         """ If company has now all it credits positive, reset debtbegin flag
