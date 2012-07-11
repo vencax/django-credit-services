@@ -38,6 +38,9 @@ new_credit_arrived = Signal(providing_args=['creditInfo', 'vs', 'ss', 'amount'])
 def processCredit(companyInfo, value, currency, bankaccount):
     """ Adds value of appropriate creditInfo.
         Sends margin call if necessary. """
+    if companyInfo.user_id == settings.OUR_COMPANY_ID:
+        return # do not account ourself
+    
     try:
         creditInfo = companyInfo.credits.get(currency=currency)
     except companyInfo.credits.model.DoesNotExist:
