@@ -12,6 +12,11 @@ class CreditInfo(models.Model):
     currency = models.ForeignKey(Thing)
     company = models.ForeignKey(CompanyInfo, related_name='credits')
     
+    class Meta:
+        verbose_name = _('credit info')
+        verbose_name_plural = _('credit infos')
+        ordering = ['company']
+    
 CompanyInfo.add_to_class('debtbegin', models.DateField(_('debt begin'), 
-        blank=True, null=True, default=None,
+        blank=True, null=True, default=None, editable=False,
         help_text=_('Date of cross zero in any of credits of the user')))
