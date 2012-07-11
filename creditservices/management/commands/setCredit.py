@@ -4,7 +4,7 @@ Created on Dec 29, 2011
 @author: vencax
 '''
 import logging
-from invoices.models import CompanyInfo, Invoice
+from invoices.models import CompanyInfo
 from django.core.management.base import BaseCommand
 from valueladder.models import Thing
 from creditservices.signals import processCredit
@@ -29,7 +29,7 @@ class Command(BaseCommand):
             currency = Thing.objects.get(code=options['currency'])
         else:
             currency = Thing.objects.get_default()
-        bankAccount = Invoice.get_my_company_info().bankaccount
+        bankAccount = CompanyInfo.objects.get_our_company_info().bankaccount
         
         processCredit(companyInfo, int(options['value']), 
                       currency, bankAccount)
