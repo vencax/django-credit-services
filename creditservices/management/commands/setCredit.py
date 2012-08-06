@@ -32,4 +32,4 @@ class Command(BaseCommand):
         bankAccount = CompanyInfo.objects.get_our_company_info().bankaccount
         
         processCredit(companyInfo, int(options['value']), 
-                      currency, bankAccount)
+                      currency, bankAccount, 'manual set credit')

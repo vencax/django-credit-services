@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-11 14:24+0200\n"
+"POT-Creation-Date: 2012-08-06 15:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Vaclav Klecanda <vencax77@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,19 +29,43 @@ msgstr "informace o kreditu"
 msgid "credit infos"
 msgstr "informace o kreditu"
 
-#: models.py:20
+#: models.py:24
+msgid "change"
+msgstr "změna"
+
+#: models.py:25
+msgid "increase"
+msgstr "navýšení"
+
+#: models.py:28
+msgid "date"
+msgstr "datum"
+
+#: models.py:30
+msgid "detail"
+msgstr "detail"
+
+#: models.py:33
+msgid "credit change record"
+msgstr "záznam o změně kreditu"
+
+#: models.py:34
+msgid "credit change records"
+msgstr "záznamy o změně kreditu"
+
+#: models.py:37
 msgid "debt begin"
 msgstr "počátek dluhu"
 
-#: models.py:22
+#: models.py:39
 msgid "Date of cross zero in any of credits of the user"
 msgstr "Datum, kdy kredit jakékoli měny spadl pod nulu"
 
-#: signals.py:61
+#: signals.py:66
 msgid "credit call"
 msgstr "Žádost o navýšení kredit"
 
-#: management/commands/newCreditNotification.py:70
+#: management/commands/newCreditNotification.py:71
 msgid "credit increased"
 msgstr "kredit navýšen"
 

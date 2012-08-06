@@ -35,8 +35,9 @@ from django.dispatch.dispatcher import Signal
 shutdown_credit_services = Signal(providing_args=['instance', 'creditInfo'])
 new_credit_arrived = Signal(providing_args=['creditInfo', 'vs', 'ss', 'amount'])
 
-def processCredit(companyInfo, value, currency, bankaccount):
+def processCredit(companyInfo, value, currency, bankaccount, details):
     """ Adds value of appropriate creditInfo.
+        Saves CreditChangeRecord.
         Sends margin call if necessary. """
     if companyInfo.user_id == settings.OUR_COMPANY_ID:
         return # do not account ourself
@@ -49,6 +50,10 @@ def processCredit(companyInfo, value, currency, bankaccount):
 
     creditInfo.value += value
     creditInfo.save()
+    
+    from .models import CreditChangeRecord
+    CreditChangeRecord(user=companyInfo.user, change=value, increase=value>0,
+                       currency=currency, detail=details).save()
 
     if creditInfo.value < settings.CREDIT_MINIMUM:
         mailContent = render_to_string('creditservices/marginCall.html', {

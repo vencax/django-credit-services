@@ -40,7 +40,8 @@ class Command(EmailHandlingCommand):
             currency = Thing.objects.get(code=currencyCode)
 
             self._processParsed(vs, ss, amount, currency)
-        except Exception:
+        except Exception, e:
+            logging.exception(e)
             self._onBadVS(data)
             
     def _processParsed(self, vs, ss, amount, currency):
