@@ -53,7 +53,7 @@ def processCredit(companyInfo, value, currency, bankaccount, details):
     
     from .models import CreditChangeRecord
     CreditChangeRecord(user=companyInfo.user, change=value, increase=value>0,
-                       currency=currency, detail=details).save()
+                       currency=currency, detail=details[:512]).save()
 
     if creditInfo.value < settings.CREDIT_MINIMUM:
         mailContent = render_to_string('creditservices/marginCall.html', {
