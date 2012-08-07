@@ -57,8 +57,8 @@ def processCredit(companyInfo, value, currency, details, bankaccount=None):
 
     if creditInfo.value < settings.CREDIT_MINIMUM:
         if bankaccount is None:
-            bankaccount = companyInfo.model.objects.get_our_company_info().\
-                            bankaccount
+            bankaccount = companyInfo._default_manager.model.objects.\
+                            get_our_company_info().bankaccount
         mailContent = render_to_string('creditservices/marginCall.html', {
             'currency' : currency,
             'state' : creditInfo.value,
