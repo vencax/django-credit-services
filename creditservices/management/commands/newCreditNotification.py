@@ -13,7 +13,7 @@ from django.contrib.sites.models import Site
 from mailserver.command import EmailHandlingCommand
 from valueladder.models import Thing
 from invoices.models import CompanyInfo
-from creditservices.signals import new_credit_arrived
+from creditservices.signals import new_credit_arrived, processCredit
 from django.core.mail import mail_admins
 
 class Command(EmailHandlingCommand):
@@ -47,14 +47,8 @@ class Command(EmailHandlingCommand):
     def _processParsed(self, vs, ss, amount, currency):
         u = User.objects.get(pk=int(vs))
         companyInfo = CompanyInfo.objects.get(user__id=u.id)
-        try:
-            creditInfo = companyInfo.credits.get(currency=currency)
-        except companyInfo.credits.model.DoesNotExist:
-            creditInfo = companyInfo.credits.model(company=companyInfo, value=0,
-                                                   currency=currency)
         
-        creditInfo.value += amount
-        creditInfo.save()
+        creditInfo = processCredit(companyInfo, amount, currency, 'income payment')
         
         self._resetDebtFlag(companyInfo, creditInfo)
         

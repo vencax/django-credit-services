@@ -29,7 +29,6 @@ class Command(BaseCommand):
             currency = Thing.objects.get(code=options['currency'])
         else:
             currency = Thing.objects.get_default()
-        bankAccount = CompanyInfo.objects.get_our_company_info().bankaccount
         
         processCredit(companyInfo, int(options['value']), 
-                      currency, bankAccount, 'manual set credit')
+                      currency, 'manual set credit')
