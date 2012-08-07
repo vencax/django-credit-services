@@ -27,7 +27,7 @@ class CreditChangeRecord(models.Model):
     user = models.ForeignKey(User, related_name='credits')
     date = models.DateField(verbose_name=_('date'), editable=False, 
                             auto_now_add=True)
-    detail = models.CharField(_('detail'), max_length=512)
+    detail = models.TextField(_('detail'), max_length=512)
     
     class Meta:
         verbose_name = _('credit change record')
