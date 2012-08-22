@@ -1,7 +1,7 @@
 {% load i18n %}
 
-{% blocktrans with user.id as VS and creditInfo.company.user.get_full_name as name %}
-Hi {{ name }},
+{% blocktrans with company.user.id as VS and company.user.get_full_name as name and company.phone as tel %}
+Hi {{ name }} ({{ tel }}),
 please send an amount with variable symbol {{ VS }} to account {{ account }} to increase your credit.
 Your current credit is {{ state }}.
 

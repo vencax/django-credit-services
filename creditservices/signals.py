@@ -63,7 +63,7 @@ def processCredit(companyInfo, value, currency, details, bankaccount=None):
             'currency' : currency,
             'state' : creditInfo.value,
             'domain' : Site.objects.get_current(),
-            'user' : companyInfo.user,
+            'company' : companyInfo,
             'account' : bankaccount
         })
         companyInfo.user.email_user(ugettext('credit call'), mailContent)

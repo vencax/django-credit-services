@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-06 15:40+0200\n"
+"POT-Creation-Date: 2012-08-22 09:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Vaclav Klecanda <vencax77@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,11 +61,11 @@ msgstr "počátek dluhu"
 msgid "Date of cross zero in any of credits of the user"
 msgstr "Datum, kdy kredit jakékoli měny spadl pod nulu"
 
-#: signals.py:66
+#: signals.py:69
 msgid "credit call"
-msgstr "Žádost o navýšení kredit"
+msgstr "Žádost o navýšení kreditu"
 
-#: management/commands/newCreditNotification.py:71
+#: management/commands/newCreditNotification.py:65
 msgid "credit increased"
 msgstr "kredit navýšen"
 
@@ -73,7 +73,7 @@ msgstr "kredit navýšen"
 #, python-format
 msgid ""
 "\n"
-"Hi,\n"
+"Hi %(name)s (%(tel)s),\n"
 "please send an amount with variable symbol %(VS)s to account %(account)s to "
 "increase your credit.\n"
 "Your current credit is %(state)s.\n"
@@ -81,7 +81,7 @@ msgid ""
 "yours sincerely %(domain)s robot.\n"
 msgstr ""
 "\n"
-"Zdravíčko,\n"
+"Zdravíčko %(name)s (%(tel)s),\n"
 "prosím navyšte si kredit platbou s variabilním symbolem %(VS)s na účet "
 "%(account)s .\n"
 "Váš současný kredit je %(state)s.\n"
