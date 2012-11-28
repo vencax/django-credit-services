@@ -12,14 +12,17 @@ from creditservices.signals import shutdown_credit_services
 from django.db.transaction import commit_on_success
 from django.utils.translation import activate
 
+
 class Command(BaseCommand):
-    help = 'check credits of companies if they are not in debt too long' #@ReservedAssignment
+    help = 'check credits of companies \
+if they are not in debt too long'  # @ReservedAssignment
+
     DEPTH_DEATHLINE = getattr(settings, 'DEPTH_DEATHLINE', 30)
-    
+
     def handle(self, *args, **options):
         activate(settings.LANGUAGE_CODE)
         logging.basicConfig()
-        
+
         for companyInfo in CompanyInfo.objects.all():
             for creditInfo in companyInfo.credits.all():
                 self._processCredit(companyInfo, creditInfo)
@@ -30,7 +33,7 @@ class Command(BaseCommand):
         if creditInfo.value and companyInfo.debtbegin is None:
             companyInfo.debtbegin = datetime.datetime.now()
             companyInfo.save()
-    
+
         # check if the company is not in debt too long
         daysInDept = (datetime.date.today() - companyInfo.debtbegin).days
         if daysInDept > self.DEPTH_DEATHLINE:

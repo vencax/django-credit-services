@@ -16,57 +16,61 @@ from invoices.models import CompanyInfo
 from creditservices.signals import new_credit_arrived, processCredit
 from django.core.mail import mail_admins
 
+
 class Command(EmailHandlingCommand):
-    help = 'parses incoming mail and takes actions base on it' #@ReservedAssignment
-    
+    help = 'parses incoming mail and \
+takes actions base on it'  # @ReservedAssignment
+
     def processMail(self, recipient, mailfrom, data):
         activate(settings.LANGUAGE_CODE)
-        
+
         logging.info('Loading %s' % settings.CREDIT_NOTIFICATION_PARSER)
-        
-        pMod = __import__(settings.CREDIT_NOTIFICATION_PARSER, 
+
+        pMod = __import__(settings.CREDIT_NOTIFICATION_PARSER,
                           globals={}, locals={}, fromlist=['Parser'])
         try:
             parser = pMod.Parser()
             parsed = parser.parse(data)
-            
+
             logging.info('Parsed: %s' % str(parsed))
-            
+
             transactionType, vs, ss, amount, _, _, currencyCode = parsed
-            
+
             if transactionType != 'IN':
                 return
-        
+
             currency = Thing.objects.get(code=currencyCode)
 
             self._processParsed(vs, ss, amount, currency)
         except Exception, e:
             logging.exception(e)
             self._onBadVS(data)
-            
+
     def _processParsed(self, vs, ss, amount, currency):
         u = User.objects.get(pk=int(vs))
         companyInfo = CompanyInfo.objects.get(user__id=u.id)
-        
-        creditInfo = processCredit(companyInfo, amount, currency, 'income payment')
-        
+
+        creditInfo = processCredit(companyInfo, amount,
+                                   currency, 'income payment')
+
         self._resetDebtFlag(companyInfo, creditInfo)
-        
-        new_credit_arrived.send(sender=CompanyInfo, vs=vs, ss=ss, 
+
+        new_credit_arrived.send(sender=CompanyInfo, vs=vs, ss=ss,
                                 amount=amount, creditInfo=creditInfo)
-        
+
         if u.email:
-            mailContent = render_to_string('creditservices/thxForCredit.html', {
-                'amount' : amount,
-                'currency' : currency,
-                'state' : creditInfo.value,
-                'domain' : Site.objects.get_current()
+            mailContent = render_to_string(
+                'creditservices/thxForCredit.html', {
+                'amount': amount,
+                'currency': currency,
+                'state': creditInfo.value,
+                'domain': Site.objects.get_current()
             })
             u.email_user(ugettext('credit increased'), mailContent)
-        
+
     def _onBadVS(self, data):
         mail_admins('Unassotiated payment', data, fail_silently=True)
-        
+
     def _resetDebtFlag(self, companyInfo, creditInfo):
         """ If company has now all it credits positive, reset debtbegin flag
         """
