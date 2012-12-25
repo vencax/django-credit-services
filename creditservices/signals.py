@@ -9,6 +9,7 @@ from django.contrib.sites.models import Site
 from django.utils.translation import ugettext
 from django.dispatch.dispatcher import Signal
 
+CREDIT_MINIMUM = getattr(settings, 'CREDIT_MINIMUM', 0)
 #def invoice_saved(instance, sender, **kwargs):
 #    """
 #    Called on invoice save.
@@ -33,10 +34,10 @@ from django.dispatch.dispatcher import Signal
 #    pass
 
 shutdown_credit_services = Signal(
-    providing_args=['instance', 'creditInfo']
+    providing_args=['instance']
 )
 new_credit_arrived = Signal(
-    providing_args=['creditInfo', 'vs', 'ss', 'amount']
+    providing_args=['currency', 'vs', 'ss', 'amount']
 )
 
 
@@ -47,32 +48,22 @@ def processCredit(companyInfo, value, currency, details, bankaccount=None):
     if companyInfo.user_id == settings.OUR_COMPANY_ID:
         return  # do not account ourself
 
-    try:
-        creditInfo = companyInfo.credits.get(currency=currency)
-    except companyInfo.credits.model.DoesNotExist:
-        creditInfo = companyInfo.credits.model(company=companyInfo, value=0,
-                                               currency=currency)
-
-    creditInfo.value += value
-    creditInfo.save()
-
     from .models import CreditChangeRecord
     CreditChangeRecord(user=companyInfo.user, change=value,
                        increase=value > 0,
                        currency=currency,
                        detail=details[:512]).save()
 
-    if creditInfo.value < settings.CREDIT_MINIMUM:
+    if value < 0 and \
+    companyInfo.user.getCurrentCredit(currency) < CREDIT_MINIMUM:
         if bankaccount is None:
             bankaccount = companyInfo._default_manager.model.objects.\
                             get_our_company_info().bankaccount
         mailContent = render_to_string('creditservices/marginCall.html', {
             'currency': currency,
-            'state': creditInfo.value,
+            'state': companyInfo.user.currentCredit.value,
             'domain': Site.objects.get_current(),
             'company': companyInfo,
             'account': bankaccount
         })
         companyInfo.user.email_user(ugettext('credit call'), mailContent)
-
-    return creditInfo

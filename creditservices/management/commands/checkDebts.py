@@ -24,19 +24,30 @@ if they are not in debt too long'  # @ReservedAssignment
         logging.basicConfig()
 
         for companyInfo in CompanyInfo.objects.all():
-            for creditInfo in companyInfo.credits.all():
-                self._processCredit(companyInfo, creditInfo)
+            self._processCredit(companyInfo)
 
     @commit_on_success
-    def _processCredit(self, companyInfo, creditInfo):
+    def _processCredit(self, companyInfo):
         # start count days in debt
-        if creditInfo.value and companyInfo.debtbegin is None:
-            companyInfo.debtbegin = datetime.datetime.now()
+        if self._hasUserDept(companyInfo.user) and \
+        companyInfo.debtbegin is None:
+            companyInfo.debtbegin = datetime.date.today()
             companyInfo.save()
 
         # check if the company is not in debt too long
-        daysInDept = (datetime.date.today() - companyInfo.debtbegin).days
-        if daysInDept > self.DEPTH_DEATHLINE:
-            shutdown_credit_services.send(sender=CompanyInfo,
-                                          instance=companyInfo,
-                                          creditInfo=creditInfo)
+        elif companyInfo.debtbegin is not None:
+            daysInDept = (datetime.date.today() - companyInfo.debtbegin).days
+            if daysInDept > self.DEPTH_DEATHLINE:
+                shutdown_credit_services.send(sender=CompanyInfo,
+                                              instance=companyInfo)
+
+    def _hasUserDept(self, user):
+        creds = {}
+        for crc in user.changeRecords.all():
+            if crc.currency not in creds:
+                creds[crc.currency] = 0
+            creds[crc.currency] += crc.change
+        for val in creds.values():
+            if val < 0:
+                return True
+        return False

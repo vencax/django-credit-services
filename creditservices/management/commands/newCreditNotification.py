@@ -50,20 +50,20 @@ takes actions base on it'  # @ReservedAssignment
         u = User.objects.get(pk=int(vs))
         companyInfo = CompanyInfo.objects.get(user__id=u.id)
 
-        creditInfo = processCredit(companyInfo, amount,
-                                   currency, 'income payment')
+        processCredit(companyInfo, amount, currency,
+                      ugettext('income payment'))
 
-        self._resetDebtFlag(companyInfo, creditInfo)
+        self._resetDebtFlag(companyInfo)
 
         new_credit_arrived.send(sender=CompanyInfo, vs=vs, ss=ss,
-                                amount=amount, creditInfo=creditInfo)
+                                amount=amount, currency=currency)
 
         if u.email:
             mailContent = render_to_string(
                 'creditservices/thxForCredit.html', {
                 'amount': amount,
                 'currency': currency,
-                'state': creditInfo.value,
+                'state': u.getCurrentCredit(currency),
                 'domain': Site.objects.get_current()
             })
             u.email_user(ugettext('credit increased'), mailContent)
@@ -71,11 +71,18 @@ takes actions base on it'  # @ReservedAssignment
     def _onBadVS(self, data):
         mail_admins('Unassotiated payment', data, fail_silently=True)
 
-    def _resetDebtFlag(self, companyInfo, creditInfo):
-        """ If company has now all it credits positive, reset debtbegin flag
+    def _resetDebtFlag(self, companyInfo):
+        """
+        If company has now all it credits positive, reset debtbegin flag
         """
         if companyInfo.debtbegin is not None:
-            for ci in companyInfo.credits.all():
-                if ci.value < 0:
+            creds = {}
+            for crc in companyInfo.user.changeRecords.all():
+                if crc.currency not in creds:
+                    creds[crc.currency] = 0
+                creds[crc.currency] += crc.change
+            for val in creds.values():
+                if val < 0:
                     return
             companyInfo.debtbegin = None
+            companyInfo.save()
