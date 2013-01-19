@@ -1,0 +1,37 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block extrahead %}
+<style>
+table { border: 1px solid black; }
+.odd, th { background: #ddd; }
+td { border: 1px solid black; }
+.vpn { background: white; }
+.paid { background: #bbb; }
+.diff { background: #aaaacc; }
+.above { border: 1px solid red; background: red; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>{{ company.user.get_full_name }} - {% trans "phone service info" %}</h1>
+
+<p>Tel: {{ company.get.phone }}</p>
+<p>Kredit: {{ company.getCurrentCredit }}</p>
+
+<table>
+<tr>
+	<th>Datum</th>
+	<th>castka</th>
+	<th>za co</th>
+</tr>
+{% for cr in credRecords %}
+<tr class="{% cycle 'odd' 'even' %}">
+  <td>{{ cr.date }}</td>
+  <td>{{ cr.change }}</td>
+  <td>{{ cr.detail }}</td>
+</tr>
+{% endfor %}
+<table>
+{% endblock %}
