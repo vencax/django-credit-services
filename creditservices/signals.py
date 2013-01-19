@@ -8,6 +8,8 @@ from django.template.loader import render_to_string
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext
 from django.dispatch.dispatcher import Signal
+from creditservices.models import CompanyInfo
+from invoices.models import BadIncommingTransfer
 
 CREDIT_MINIMUM = getattr(settings, 'CREDIT_MINIMUM', 0)
 #def invoice_saved(instance, sender, **kwargs):
@@ -37,8 +39,45 @@ shutdown_credit_services = Signal(
     providing_args=['instance']
 )
 new_credit_arrived = Signal(
-    providing_args=['currency', 'vs', 'ss', 'amount']
+    providing_args=['companyInfo', 'currency', 'amount']
 )
+
+CREDIT_SYMBOL = 118
+
+
+def on_account_change(sender, **kwargs):
+    """
+    Handle incoming credit increase transfer notification.
+    """
+    amount = kwargs['amount']
+    if kwargs['ss'] != CREDIT_SYMBOL or amount <= 0:
+        return
+
+    try:
+        companyInfo = CompanyInfo.objects.get(id=kwargs['vs'])
+    except CompanyInfo.DoesNotExist:
+        BadIncommingTransfer(invoice=None,
+            typee='u', transactionInfo=str(kwargs))
+
+    currency = kwargs['currency']
+
+    processCredit(companyInfo, amount, currency,
+                  ugettext('income payment'))
+
+    _resetDebtFlag(companyInfo)
+
+    new_credit_arrived.send(sender=CompanyInfo, companyInfo=companyInfo,
+                            amount=amount, currency=currency)
+
+    if companyInfo.user.email:
+        mailContent = render_to_string(
+            'creditservices/thxForCredit.html', {
+            'amount': amount,
+            'currency': currency,
+            'state': companyInfo.getCurrentCredit(currency),
+            'domain': Site.objects.get_current()
+        })
+        companyInfo.user.email_user(ugettext('credit increased'), mailContent)
 
 
 def processCredit(companyInfo, value, currency, details, bankaccount=None):
@@ -49,7 +88,7 @@ def processCredit(companyInfo, value, currency, details, bankaccount=None):
         return  # do not account ourself
 
     from .models import CreditChangeRecord
-    CreditChangeRecord(user=companyInfo.user, change=value,
+    CreditChangeRecord(company=companyInfo, change=value,
                        increase=value > 0,
                        currency=currency,
                        detail=details[:512]).save()
@@ -67,3 +106,20 @@ def processCredit(companyInfo, value, currency, details, bankaccount=None):
             'account': bankaccount
         })
         companyInfo.user.email_user(ugettext('credit call'), mailContent)
+
+
+def _resetDebtFlag(companyInfo):
+        """
+        If company has now all it credits positive, reset debtbegin flag
+        """
+        if companyInfo.debtbegin is not None:
+            creds = {}
+            for crc in companyInfo.user.changeRecords.all():
+                if crc.currency not in creds:
+                    creds[crc.currency] = 0
+                creds[crc.currency] += crc.change
+            for val in creds.values():
+                if val < 0:
+                    return
+            companyInfo.debtbegin = None
+            companyInfo.save()
