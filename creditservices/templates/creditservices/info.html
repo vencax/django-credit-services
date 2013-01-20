@@ -15,16 +15,16 @@ td { border: 1px solid black; }
 {% endblock %}
 
 {% block content %}
-<h1>{{ company.user.get_full_name }} - {% trans "phone service info" %}</h1>
+<h1>{{ company.user.get_full_name }} - {% trans "credit history" %}</h1>
 
-<p>Tel: {{ company.phone }}</p>
-<p>Kredit: {{ company.getCurrentCredit }}</p>
+<p>{% trans 'phone' %}: {{ company.phone }}</p>
+<p>{% trans 'current credit' %}: {{ company.getCurrentCredit }}</p>
 
 <table>
 <tr>
-	<th>Datum</th>
-	<th>castka</th>
-	<th>za co</th>
+	<th>{% trans 'date' %}</th>
+	<th>{% trans 'amount' %}</th>
+	<th>{% trans 'details' %}</th>
 </tr>
 {% for cr in credRecords %}
 <tr class="{% cycle 'odd' 'even' %}">

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-20 18:33+0100\n"
+"POT-Creation-Date: 2013-01-20 19:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Vaclav Klecanda <vencax77@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,7 +33,7 @@ msgstr "změna"
 msgid "increase"
 msgstr "navýšení"
 
-#: models.py:26
+#: models.py:26 templates/creditservices/info.html:25
 msgid "date"
 msgstr "datum"
 
@@ -61,13 +61,25 @@ msgstr "kredit navýšen"
 msgid "credit call"
 msgstr "Žádost o navýšení kreditu"
 
-#: tests.py:49
-msgid "invoice"
-msgstr ""
-
 #: templates/creditservices/info.html:18
-msgid "phone service info"
-msgstr ""
+msgid "credit history"
+msgstr "historie pohybů kreditu"
+
+#: templates/creditservices/info.html:20
+msgid "phone"
+msgstr "telefon"
+
+#: templates/creditservices/info.html:21
+msgid "current credit"
+msgstr "současný kredit"
+
+#: templates/creditservices/info.html:26
+msgid "amount"
+msgstr "částka"
+
+#: templates/creditservices/info.html:27
+msgid "details"
+msgstr "detaily"
 
 #: templates/creditservices/marginCall.html:3
 #, python-format
@@ -76,18 +88,21 @@ msgid ""
 "Hi %(name)s (%(tel)s),\n"
 "please send an amount with following to increase your credit:\n"
 msgstr ""
+"\n"
+"Zdravíčko %(name)s (%(tel)s),\n"
+"pro navýšení kreditu pošlete prosím částku s následujícím:\n"
 
 #: templates/creditservices/marginCall.html:8
 msgid "variable symbol"
-msgstr ""
+msgstr "variabilní symbol"
 
 #: templates/creditservices/marginCall.html:9
 msgid "specific symbol"
-msgstr ""
+msgstr "specifický symbol"
 
 #: templates/creditservices/marginCall.html:10
 msgid "account"
-msgstr ""
+msgstr "účet"
 
 #: templates/creditservices/marginCall.html:12
 #, python-format
