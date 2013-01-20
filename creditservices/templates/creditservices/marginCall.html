@@ -1,8 +1,15 @@
 {% load i18n %}
 
-{% blocktrans with company.user.id as VS and company.user.get_full_name as name and company.phone as tel %}
+{% blocktrans with company.user.get_full_name as name and company.phone as tel %}
 Hi {{ name }} ({{ tel }}),
-please send an amount with variable symbol {{ VS }} to account {{ account }} to increase your credit.
+please send an amount with following to increase your credit:
+{% endblocktrans %}
+
+{% trans 'variable symbol' %}: {{ company.user.id }}
+{% trans 'specific symbol' %}: {{ specSymbol }}
+{% trans 'account' %}: {{ account }}
+
+{% blocktrans %}
 Your current credit is {{ state }}.
 
 yours sincerely {{ domain }} robot.
