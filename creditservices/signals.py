@@ -42,7 +42,7 @@ new_credit_arrived = Signal(
     providing_args=['companyInfo', 'currency', 'amount']
 )
 
-CREDIT_SYMBOL = 118
+CREDIT_SYMBOL = getattr(settings, 'CREDIT_SYMBOL', 118)
 
 
 def on_account_change(sender, **kwargs):
@@ -54,7 +54,7 @@ def on_account_change(sender, **kwargs):
         return
 
     try:
-        companyInfo = CompanyInfo.objects.get(id=kwargs['vs'])
+        companyInfo = CompanyInfo.objects.get(user_id=kwargs['vs'])
     except CompanyInfo.DoesNotExist:
         BadIncommingTransfer(invoice=None,
             typee='u', transactionInfo=str(kwargs))
@@ -75,7 +75,7 @@ def on_account_change(sender, **kwargs):
             'amount': amount,
             'currency': currency,
             'state': companyInfo.getCurrentCredit(currency),
-            'domain': Site.objects.get_current()
+            'domain': Site.objects.get_current(),
         })
         companyInfo.user.email_user(ugettext('credit increased'), mailContent)
 
@@ -93,17 +93,19 @@ def processCredit(companyInfo, value, currency, details, bankaccount=None):
                        currency=currency,
                        detail=details[:512]).save()
 
-    if value < 0 and \
-    companyInfo.user.getCurrentCredit(currency) < CREDIT_MINIMUM:
+    currentCredit = companyInfo.getCurrentCredit(currency)
+
+    if value < 0 and currentCredit < CREDIT_MINIMUM:
         if bankaccount is None:
             bankaccount = companyInfo._default_manager.model.objects.\
                             get_our_company_info().bankaccount
         mailContent = render_to_string('creditservices/marginCall.html', {
             'currency': currency,
-            'state': companyInfo.user.currentCredit.value,
+            'state': currentCredit,
             'domain': Site.objects.get_current(),
             'company': companyInfo,
-            'account': bankaccount
+            'account': bankaccount,
+            'specSymbol': CREDIT_SYMBOL
         })
         companyInfo.user.email_user(ugettext('credit call'), mailContent)
 
