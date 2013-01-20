@@ -6,6 +6,8 @@ from invoices.models import Invoice, CompanyInfo
 from django.conf import settings
 from django.contrib.auth.models import User
 from creditservices.models import CreditChangeRecord
+from valueladder.models import Thing
+from creditservices.signals import processCredit
 
 
 class InvoiceTest(TestCase):
@@ -23,10 +25,7 @@ class InvoiceTest(TestCase):
         """
         Test account notification command.
         """
-        cInfos = CompanyInfo.objects.all().order_by('?')
-        for c in cInfos:
-            if c.id != settings.OUR_COMPANY_ID:
-                cInfo = c
+        cInfo = self._chooseCompany()
 
         mail = 'P=F8=EDjem na kont=EC: 2400260986 =C8=E1stka: %i,00 VS: %i\
  Zpr=E1va p=F8=EDjemci: =20 Aktu=E1ln=ED z=F9statek: 20 144,82\
@@ -54,6 +53,24 @@ class InvoiceTest(TestCase):
         except Invoice.DoesNotExist:
             raise AssertionError('Invoice not generated')
 
+    def testProcessCredit(self):
+        """
+        Test account notification command.
+        """
+        cInfo = self._chooseCompany()
+        currency = Thing.objects.get_default()
+        amount = -4000
+        contractor = CompanyInfo.objects.get_our_company_info()
+        processCredit(cInfo, amount, currency, 'pokus', contractor.bankaccount)
+
+        try:
+            CreditChangeRecord.objects.get(change=amount, company=cInfo)
+        except CreditChangeRecord.DoesNotExist:
+            raise AssertionError('CreditChangeRecord not exists')
+
+        self._verifyOutMessage(to=[cInfo.user.email],
+                               subject=_('credit call'))
+
     def _verifyOutMessage(self, **kwargs):
         for m in mail.outbox:
             found = True
@@ -65,3 +82,9 @@ class InvoiceTest(TestCase):
             if found:
                 return
         raise AssertionError('Email with %s was not sent' % str(kwargs))
+
+    def _chooseCompany(self):
+        cInfos = CompanyInfo.objects.all().order_by('?')
+        for c in cInfos:
+            if c.id != settings.OUR_COMPANY_ID:
+                return c
