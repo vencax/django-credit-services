@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-25 16:56+0100\n"
+"POT-Creation-Date: 2013-01-20 18:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Vaclav Klecanda <vencax77@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,66 +17,88 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: models.py:13
+#: models.py:16
 msgid "credit change record"
 msgstr "záznam o změně kreditu"
 
-#: models.py:14
+#: models.py:17
 msgid "credit change records"
 msgstr "záznamy o změně kreditu"
 
-#: models.py:17
+#: models.py:20
 msgid "change"
 msgstr "změna"
 
-#: models.py:18
+#: models.py:21
 msgid "increase"
 msgstr "navýšení"
 
-#: models.py:21
+#: models.py:26
 msgid "date"
 msgstr "datum"
 
-#: models.py:23
+#: models.py:28
 msgid "detail"
 msgstr "detail"
 
-#: models.py:27
+#: models.py:35
 msgid "debt begin"
 msgstr "počátek dluhu"
 
-#: models.py:29
+#: models.py:37
 msgid "Date of cross zero in any of credits of the user"
 msgstr "Datum, kdy kredit jakékoli měny spadl pod nulu"
 
-#: signals.py:69
-msgid "credit call"
-msgstr "Žádost o navýšení kreditu"
-
-#: management/commands/newCreditNotification.py:54
+#: signals.py:65
 msgid "income payment"
 msgstr "příchozí platba"
 
-#: management/commands/newCreditNotification.py:69
+#: signals.py:80 tests.py:47
 msgid "credit increased"
 msgstr "kredit navýšen"
+
+#: signals.py:110 tests.py:72
+msgid "credit call"
+msgstr "Žádost o navýšení kreditu"
+
+#: tests.py:49
+msgid "invoice"
+msgstr ""
+
+#: templates/creditservices/info.html:18
+msgid "phone service info"
+msgstr ""
 
 #: templates/creditservices/marginCall.html:3
 #, python-format
 msgid ""
 "\n"
 "Hi %(name)s (%(tel)s),\n"
-"please send an amount with variable symbol %(VS)s to account %(account)s to "
-"increase your credit.\n"
-"Your current credit is %(state)s.\n"
+"please send an amount with following to increase your credit:\n"
+msgstr ""
+
+#: templates/creditservices/marginCall.html:8
+msgid "variable symbol"
+msgstr ""
+
+#: templates/creditservices/marginCall.html:9
+msgid "specific symbol"
+msgstr ""
+
+#: templates/creditservices/marginCall.html:10
+msgid "account"
+msgstr ""
+
+#: templates/creditservices/marginCall.html:12
+#, python-format
+msgid ""
+"\n"
+"Your current credit is %(state)s %(currency)s.\n"
 "\n"
 "yours sincerely %(domain)s robot.\n"
 msgstr ""
 "\n"
-"Zdravíčko %(name)s (%(tel)s),\n"
-"prosím navyšte si kredit platbou s variabilním symbolem %(VS)s na účet "
-"%(account)s .\n"
-"Váš současný kredit je %(state)s.\n"
+"Váš současný kredit je %(state)s %(currency)s.\n"
 "\n"
 "s pozdravem %(domain)s robot.\n"
 
