@@ -109,6 +109,8 @@ def processCredit(companyInfo, value, currency, details, bankaccount=None):
         })
         companyInfo.user.email_user(ugettext('credit call'), mailContent)
 
+    return currentCredit
+
 
 def _resetDebtFlag(companyInfo):
         """
