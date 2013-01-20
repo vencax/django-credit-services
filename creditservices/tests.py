@@ -1,5 +1,7 @@
 from django.test import TestCase
+from django.utils.translation import ugettext as _
 from django.core.management import call_command
+from django.core import mail
 from invoices.models import Invoice, CompanyInfo
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -33,7 +35,7 @@ class InvoiceTest(TestCase):
 
         amount = 433
         args = baseArgs + (
-            mail % (amount, cInfo.id),
+            mail % (amount, cInfo.user.id),
         )
         call_command('accountNotification', *args)
 
@@ -42,7 +44,24 @@ class InvoiceTest(TestCase):
         except CreditChangeRecord.DoesNotExist:
             raise AssertionError('CreditChangeRecord not exists')
 
+        self._verifyOutMessage(to=[cInfo.user.email],
+                               subject=_('credit increased'))
+        self._verifyOutMessage(to=[cInfo.user.email],
+                               subject=_('invoice'))
+
         try:
             Invoice.objects.get(subscriber=cInfo)
         except Invoice.DoesNotExist:
             raise AssertionError('Invoice not generated')
+
+    def _verifyOutMessage(self, **kwargs):
+        for m in mail.outbox:
+            found = True
+            for k, v in kwargs.items():
+                if getattr(m, k) != v:
+                    found = False
+                    break
+
+            if found:
+                return
+        raise AssertionError('Email with %s was not sent' % str(kwargs))
