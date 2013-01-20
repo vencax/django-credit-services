@@ -10,6 +10,7 @@ from .signals import on_account_change
 class CreditChangeRecord(models.Model):
     """
     Record how a credit changes in time.
+    NOTE: it is connected directly to User model. NOT to CompanyInfo!!
     """
     class Meta:
         verbose_name = _('credit change record')
@@ -20,6 +21,7 @@ class CreditChangeRecord(models.Model):
     increase = models.BooleanField(_('increase'))
     currency = models.ForeignKey(Thing)
     user = models.ForeignKey(User, related_name='_changeRecords', null=True)
+    """ This is gonna be removed """
     company = models.ForeignKey(CompanyInfo, related_name='changeRecords')
     date = models.DateField(verbose_name=_('date'), editable=False,
                             auto_now_add=True)
