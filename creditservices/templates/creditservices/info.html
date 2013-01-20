@@ -17,7 +17,7 @@ td { border: 1px solid black; }
 {% block content %}
 <h1>{{ company.user.get_full_name }} - {% trans "phone service info" %}</h1>
 
-<p>Tel: {{ company.get.phone }}</p>
+<p>Tel: {{ company.phone }}</p>
 <p>Kredit: {{ company.getCurrentCredit }}</p>
 
 <table>
