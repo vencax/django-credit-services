@@ -8,8 +8,7 @@ from django.template.loader import render_to_string
 from django.contrib.sites.models import Site
 from django.utils.translation import ugettext
 from django.dispatch.dispatcher import Signal
-from creditservices.models import CompanyInfo
-from invoices.models import BadIncommingTransfer
+
 
 CREDIT_MINIMUM = getattr(settings, 'CREDIT_MINIMUM', 0)
 #def invoice_saved(instance, sender, **kwargs):
@@ -52,6 +51,9 @@ def on_account_change(sender, **kwargs):
     amount = kwargs['amount']
     if kwargs['ss'] != CREDIT_SYMBOL or amount <= 0:
         return
+
+    from creditservices.models import CompanyInfo
+    from invoices.models import BadIncommingTransfer
 
     try:
         companyInfo = CompanyInfo.objects.get(user_id=kwargs['vs'])
