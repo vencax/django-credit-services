@@ -19,7 +19,7 @@ class CreditChangeRecord(models.Model):
 
     change = models.FloatField(_('change'))
     increase = models.BooleanField(_('increase'))
-    currency = models.ForeignKey(Thing)
+    currency = models.ForeignKey(Thing, verbose_name=_('currency'))
     user = models.ForeignKey(User, related_name='_changeRecords', null=True)
     """ This is gonna be removed """
     company = models.ForeignKey(CompanyInfo, related_name='changeRecords')
