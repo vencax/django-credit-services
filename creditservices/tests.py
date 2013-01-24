@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.utils.translation import ugettext as _
 from django.core.management import call_command
 from django.core import mail
-from invoices.models import Invoice, CompanyInfo
+from invoices.models import Invoice, Item, CompanyInfo
 from django.conf import settings
 from django.contrib.auth.models import User
 from creditservices.models import CreditChangeRecord
@@ -49,9 +49,12 @@ class InvoiceTest(TestCase):
                                subject=_('invoice'))
 
         try:
-            Invoice.objects.get(subscriber=cInfo)
+            i = Invoice.objects.get(subscriber=cInfo)
+            Item.objects.get(invoice=i, price=amount)
         except Invoice.DoesNotExist:
             raise AssertionError('Invoice not generated')
+        except Item.DoesNotExist:
+            raise AssertionError('Bad invoice generated')
 
     def testProcessCredit(self):
         """
