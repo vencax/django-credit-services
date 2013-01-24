@@ -15,7 +15,7 @@ class CreditChangeRecord(models.Model):
     class Meta:
         verbose_name = _('credit change record')
         verbose_name_plural = _('credit change records')
-        ordering = ['date']
+        ordering = ['-date']
 
     change = models.FloatField(_('change'))
     increase = models.BooleanField(_('increase'))
