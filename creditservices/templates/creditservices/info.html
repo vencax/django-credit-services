@@ -18,7 +18,7 @@ td { border: 1px solid black; }
 <h1>{{ company.user.get_full_name }} - {% trans "credit history" %}</h1>
 
 <p>{% trans 'phone' %}: {{ company.phone }}</p>
-<p>{% trans 'current credit' %}: {{ company.getCurrentCredit }}</p>
+<p>{% trans 'current credit' %}: {{ company.getCurrentCredit|floatformat }}</p>
 
 <table>
 <tr>
