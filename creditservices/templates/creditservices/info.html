@@ -11,6 +11,8 @@ td { border: 1px solid black; }
 .paid { background: #bbb; }
 .diff { background: #aaaacc; }
 .above { border: 1px solid red; background: red; }
+.increase { background: #22ff00; }
+.decrease { background: red; }
 </style>
 {% endblock %}
 
@@ -27,7 +29,7 @@ td { border: 1px solid black; }
 	<th>{% trans 'details' %}</th>
 </tr>
 {% for cr in credRecords %}
-<tr class="{% cycle 'odd' 'even' %}">
+<tr class="{% cycle 'odd' 'even' %} {% if cr.change > 0 %}increase{% else %}decrease{% endif %}">
   <td>{{ cr.date }}</td>
   <td>{{ cr.change }}</td>
   <td>{{ cr.detail }}</td>
