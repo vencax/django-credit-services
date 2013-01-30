@@ -44,42 +44,34 @@ new_credit_arrived = Signal(
 CREDIT_SYMBOL = getattr(settings, 'CREDIT_SYMBOL', 118)
 
 
-def on_account_change(sender, **kwargs):
+def on_account_change(sender, parsed, **kwargs):
     """
     Handle incoming credit increase transfer notification.
     """
-    amount = kwargs['amount']
-    if kwargs['ss'] != CREDIT_SYMBOL or amount <= 0:
+    amount = parsed['amount']
+    if parsed['constSymb'] != CREDIT_SYMBOL or amount <= 0:
         return
 
     from creditservices.models import CompanyInfo
     from invoices.models import BadIncommingTransfer
 
     try:
-        companyInfo = CompanyInfo.objects.get(user_id=kwargs['vs'])
+        companyInfo = CompanyInfo.objects.get(user_id=parsed['varSymb'])
     except CompanyInfo.DoesNotExist:
         BadIncommingTransfer(invoice=None,
             typee='u', transactionInfo=str(kwargs))
 
-    currency = kwargs['currency']
-
-    processCredit(companyInfo, amount, currency,
-                  ugettext('income payment'))
+    from valueladder.models import Thing
+    currency = Thing.objects.get(code=kwargs['currency'])
+    processCredit(companyInfo, amount, currency, ugettext('income payment'))
 
     _resetDebtFlag(companyInfo)
 
     new_credit_arrived.send(sender=CompanyInfo, companyInfo=companyInfo,
                             amount=amount, currency=currency)
 
-    if companyInfo.user.email:
-        mailContent = render_to_string(
-            'creditservices/thxForCredit.html', {
-            'amount': amount,
-            'currency': currency,
-            'state': companyInfo.getCurrentCredit(currency),
-            'domain': Site.objects.get_current(),
-        })
-        companyInfo.user.email_user(ugettext('credit increased'), mailContent)
+    _sendThanksForCredit(companyInfo, amount, currency)
+    return 'credit processed'
 
 
 def processCredit(companyInfo, value, currency, details, bankaccount=None):
@@ -129,3 +121,15 @@ def _resetDebtFlag(companyInfo):
                     return
             companyInfo.debtbegin = None
             companyInfo.save()
+
+
+def _sendThanksForCredit(companyInfo, amount, currency):
+    if companyInfo.user.email:
+        mailContent = render_to_string(
+            'creditservices/thxForCredit.html', {
+            'amount': amount,
+            'currency': currency,
+            'state': companyInfo.getCurrentCredit(currency),
+            'domain': Site.objects.get_current(),
+        })
+        companyInfo.user.email_user(ugettext('credit increased'), mailContent)

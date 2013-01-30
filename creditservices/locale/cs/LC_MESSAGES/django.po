@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-20 19:47+0100\n"
+"POT-Creation-Date: 2013-01-30 21:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Vaclav Klecanda <vencax77@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
+
 
 #: models.py:16
 msgid "credit change record"
@@ -33,7 +34,11 @@ msgstr "změna"
 msgid "increase"
 msgstr "navýšení"
 
-#: models.py:26 templates/creditservices/info.html:25
+#: models.py:22
+msgid "currency"
+msgstr "měna"
+
+#: models.py:26 templates/creditservices/info.html:27
 msgid "date"
 msgstr "datum"
 
@@ -49,35 +54,35 @@ msgstr "počátek dluhu"
 msgid "Date of cross zero in any of credits of the user"
 msgstr "Datum, kdy kredit jakékoli měny spadl pod nulu"
 
-#: signals.py:65
+#: signals.py:66
 msgid "income payment"
 msgstr "příchozí platba"
 
-#: signals.py:80 tests.py:47
-msgid "credit increased"
-msgstr "kredit navýšen"
-
-#: signals.py:110 tests.py:72
+#: signals.py:104 tests.py:75
 msgid "credit call"
 msgstr "Žádost o navýšení kreditu"
 
-#: templates/creditservices/info.html:18
+#: signals.py:135 tests.py:47
+msgid "credit increased"
+msgstr "kredit navýšen"
+
+#: templates/creditservices/info.html:20
 msgid "credit history"
 msgstr "historie pohybů kreditu"
 
-#: templates/creditservices/info.html:20
+#: templates/creditservices/info.html:22
 msgid "phone"
 msgstr "telefon"
 
-#: templates/creditservices/info.html:21
+#: templates/creditservices/info.html:23
 msgid "current credit"
 msgstr "současný kredit"
 
-#: templates/creditservices/info.html:26
+#: templates/creditservices/info.html:28
 msgid "amount"
 msgstr "částka"
 
-#: templates/creditservices/info.html:27
+#: templates/creditservices/info.html:29
 msgid "details"
 msgstr "detaily"
 
@@ -97,8 +102,8 @@ msgid "variable symbol"
 msgstr "variabilní symbol"
 
 #: templates/creditservices/marginCall.html:9
-msgid "specific symbol"
-msgstr "specifický symbol"
+msgid "constant symbol"
+msgstr ""
 
 #: templates/creditservices/marginCall.html:10
 msgid "account"

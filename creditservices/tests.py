@@ -29,7 +29,7 @@ class InvoiceTest(TestCase):
 
         mail = 'P=F8=EDjem na kont=EC: 2400260986 =C8=E1stka: %i,00 VS: %i\
  Zpr=E1va p=F8=EDjemci: =20 Aktu=E1ln=ED z=F9statek: 20 144,82\
- Proti=FA=E8et: 321-2500109888/2010 SS:=118 KS: 0008'
+ Proti=FA=E8et: 321-2500109888/2010 SS:=1118 KS: 118'
         baseArgs = ('credit@vpn.vxk.cz', 'automat@fio.cz')
 
         amount = 433
