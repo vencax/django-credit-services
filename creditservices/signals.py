@@ -62,7 +62,7 @@ def on_account_change(sender, parsed, **kwargs):
             typee='u', transactionInfo=str(kwargs))
 
     from valueladder.models import Thing
-    currency = Thing.objects.get(code=kwargs['currency'])
+    currency = Thing.objects.get(code=parsed['currency'])
     processCredit(companyInfo, amount, currency, ugettext('income payment'))
 
     _resetDebtFlag(companyInfo)
