@@ -49,7 +49,7 @@ def on_account_change(sender, parsed, **kwargs):
     Handle incoming credit increase transfer notification.
     """
     amount = parsed['amount']
-    if parsed['constSymb'] != CREDIT_SYMBOL or amount <= 0:
+    if not _is_credit_payment(parsed):
         return
 
     from creditservices.models import CompanyInfo
@@ -72,6 +72,12 @@ def on_account_change(sender, parsed, **kwargs):
 
     _sendThanksForCredit(companyInfo, amount, currency)
     return 'credit processed'
+
+
+def _is_credit_payment(parsed):
+    return parsed['direction'] != 'OUT' and parsed['amount'] > 0 and \
+        (parsed['constSymb'] == CREDIT_SYMBOL or \
+         parsed['specSymb'] == CREDIT_SYMBOL)
 
 
 def processCredit(companyInfo, value, currency, details, bankaccount=None):
