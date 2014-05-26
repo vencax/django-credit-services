@@ -29,3 +29,14 @@ class InfoView(TemplateView):
     def get(self, request, *args, **kwargs):
         self.company = get_object_or_404(CompanyInfo, user_id=kwargs['uid'])
         return super(InfoView, self).get(request, *args, **kwargs)
+
+
+class CreditLIstView(TemplateView):
+    template_name = 'creditservices/creditlist.html'
+
+    def get_context_data(self, **kwargs):
+        cinfos = CompanyInfo.objects.all()
+
+        return {
+            'cinfos': cinfos
+        }

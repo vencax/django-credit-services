@@ -1,0 +1,31 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+
+{% block extrahead %}
+<style>
+table { border: 1px solid black; }
+.odd, th { background: #ddd; }
+td { border: 1px solid black; }
+.vpn { background: white; }
+.paid { background: #bbb; }
+.diff { background: #aaaacc; }
+.above { border: 1px solid red; background: red; }
+.increase { background: #22ff00; }
+.decrease { background: red; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Credits</h1>
+
+<table>
+{% for ci in cinfos %}
+<tr class="{% cycle 'odd' 'even' %} {% if ci.getCurrentCredit > 0 %}increase{% else %}decrease{% endif %}">
+  <td>{{ ci.user.lastname }} {{ ci.user.firstname }} ({{ ci.user }})</td>
+  <td>{{ ci.getCurrentCredit }}</td>
+</tr>
+{% endfor %}
+<table>
+
+{% endblock %}
